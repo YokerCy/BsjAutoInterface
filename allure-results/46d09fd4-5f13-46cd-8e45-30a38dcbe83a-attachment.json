@@ -1,0 +1,23 @@
+{
+  "code": 200,
+  "data": {
+    "userId": 2042,
+    "parentId": 241,
+    "userName": "自动修改用户名",
+    "email": null,
+    "config": {
+      "SHOWINTRODUCTION": "true"
+    },
+    "password": "n1it8C15ihEkcrLI2iFVVQ==",
+    "phone": null,
+    "permission": "",
+    "webUrl": null,
+    "remark": null,
+    "customerKey": "412a190c-2d83-4a0b-ba81-dd2576b70836",
+    "whiteIp": "127.0.0.1"
+  },
+  "msg": "Success",
+  "total": null,
+  "extend": null,
+  "empty": false
+}

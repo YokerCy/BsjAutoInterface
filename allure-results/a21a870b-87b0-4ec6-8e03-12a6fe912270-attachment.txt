@@ -1,0 +1,10 @@
+2026-06-04 09:59:49,111 - INFO - conftest.py[line:176] - 修改用户名-前置处理器
+2026-06-04 09:59:49,111 - INFO - conftest.py[line:86] - 发送请求 --> GET https://ytest.gpstracktech.com/webapi/user/getUserTree
+2026-06-04 09:59:49,219 - INFO - conftest.py[line:86] - 发送请求 --> POST https://ytest.gpstracktech.com/webapi/user/addUser
+2026-06-04 09:59:49,408 - INFO - conftest.py[line:202] - 修改用户-新用户名: 新增待修改用户, 用户ID>> : 2042
+2026-06-04 09:59:49,409 - INFO - conftest.py[line:86] - 发送请求 --> GET https://ytest.gpstracktech.com/webapi/user/getUserTree
+2026-06-04 09:59:49,546 - INFO - conftest.py[line:86] - 发送请求 --> POST https://ytest.gpstracktech.com/webapi/user/updateUser
+2026-06-04 09:59:49,670 - INFO - conftest.py[line:86] - 发送请求 --> GET https://ytest.gpstracktech.com/webapi/user/getUserTree
+2026-06-04 09:59:49,802 - INFO - conftest.py[line:215] - 后置-获取用户ID>> : 2042
+2026-06-04 09:59:49,802 - INFO - conftest.py[line:86] - 发送请求 --> GET https://ytest.gpstracktech.com/webapi/user/delUser
+2026-06-04 09:59:49,862 - INFO - conftest.py[line:218] - 修改用户-后置删除用户: {'code': 200, 'data': None, 'msg': 'Success', 'total': None, 'extend': None, 'empty': True}

@@ -1,0 +1,1 @@
+https://ytest.gpstracktech.com/webapi/user/delUser?__sm_ver=1.21.3-4%2C20250718190538&platform=PC&version=base&userId=2041

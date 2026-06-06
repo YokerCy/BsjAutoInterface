@@ -1,0 +1,43 @@
+# config.yaml
+default: "test"
+
+environments:
+  test:
+    base_url: "https://ytest.gpstracktech.com/webapi/"
+    base_api_url: "https://ytest.gpstracktech.com/api/" #调用api接口
+    timeout: 5
+    accounts:
+      admin:
+        username: "youself"
+        password: "***REMOVED***"
+    common_params:
+      __sm_ver: "1.21.3-4,20250718190538"
+      platform: "PC"
+      version: "base"
+    common_headers:
+      key: "***REMOVED***"
+      version: "1.0"
+      Accept-Language: "en"
+      Content-Type: "application/json"
+
+  prod:
+    base_url: "https://api.example.com"
+    timeout: 10
+
+endpoints:
+  login: "/user/login"
+  userTree: "/user/getUserTree"
+  addUser: "/user/addUser"
+  delUser: "/user/delUser"
+  updateUser: "/user/updateUser"
+  loadSimpleByUsers: "/monitor/loadSimpleByUsers"
+  add_Group: "/group/add"
+  delete_Group: "/group/remove"
+  add_vehicle: "/vehicle/addVehicle"
+  group_list: "/group/list"
+  user_device: "/monitor/getUserDevice"
+  group_one: "/group/one"
+  historical_trajectory: "/track/getTrackList"
+  real_time_location_api: "/monitor/getRealTimeInfo"
+  get_alarm_type: "/alarm/getAlarmType"
+  alarm_info: "/alarm/getAlarmInfo"

@@ -1,0 +1,11 @@
+- case_name: "获取告警类型"
+  interface: "get_alarm_type"
+  expect_code: 200
+  expect_msg: "Success"
+  quantity: 1
+
+- case_name: "查询告警信息"
+  interface: "get_alarm_information"
+  expect_code: 200
+  expect_msg: "Success"
+  payload: {"device_id": ["15900000070"]}

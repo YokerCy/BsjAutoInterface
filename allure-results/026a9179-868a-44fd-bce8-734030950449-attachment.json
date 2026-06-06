@@ -1,0 +1,56 @@
+{
+  "code": 200,
+  "data": [
+    {
+      "id": 241,
+      "parentId": 98,
+      "order": 1,
+      "name": "youself",
+      "customerKey": "***REMOVED***",
+      "money": 0,
+      "phone": null,
+      "createTime": "2023-12-21 14:55:51",
+      "webUrl": "",
+      "label": "youself",
+      "paymentLink": null,
+      "userName": "youself",
+      "email": "",
+      "children": [
+        {
+          "id": 310,
+          "parentId": 241,
+          "order": 0,
+          "name": "you2",
+          "customerKey": "a8f01f6b-8c76-4fbe-9dbb-a14a050918ca",
+          "money": 0,
+          "phone": null,
+          "createTime": "2024-01-25 14:13:11",
+          "webUrl": "000",
+          "label": "you2",
+          "paymentLink": "http://web.global-iot.m2mzy.com/#/?iccid=",
+          "userName": "you2",
+          "email": ""
+        },
+        {
+          "id": 2043,
+          "parentId": 241,
+          "order": 2,
+          "name": "前置用户待删除",
+          "customerKey": "c9b705da-aec3-4301-8dd1-1b7be002e5f5",
+          "money": 0,
+          "phone": null,
+          "createTime": "2026-06-04 09:59:48",
+          "webUrl": null,
+          "label": "前置用户待删除",
+          "paymentLink": null,
+          "userName": "前置用户待删除",
+          "email": ""
+        }
+      ]
+    }
+  ],
+  "msg": "Success",
+  "total": 3,
+  "extend": null,
+  "empty": false
+}

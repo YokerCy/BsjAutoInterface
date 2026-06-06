@@ -1,0 +1,53 @@
+ - case_name: "用户树验证"
+   interface: "get_user_tree"
+   expect_code: 200
+   expect_msg: "Success"
+   children_name: "you2"
+   self_name: "youself"
+
+ - case_name: "用户树验证2"
+   interface: "get_user_tree"
+   expect_code: 200
+   expect_msg: "Success"
+   children_name: "you2"
+   self_name: "youself"
+
+# 接口2：多场景（不同入参，不同预期）
+ - case_name: "查询用户信息-成功"
+   interface: "get_user_info"
+   expect_code: 200
+   payload: {"user_id": "admin"}
+   expect_data: {"name": "管理员"}
+
+ - case_name: "查询用户信息-不存在"
+   interface: "get_user_info"
+   expect_code: 404
+   payload: {"user_id": "none"}
+
+# loadSimpleByUsers
+ - case_name: "用户所属车组"
+   interface: "loadSimpleByUsers"
+   expect_code: 200
+   expect_msg: "Success"
+   quantity: 1
+
+ - case_name: "新增用户"
+   interface: "addUser"
+   expect_code: 200
+   expect_msg: "Success"
+   payload: {"userName": "自动创建用户", "email": '', "password": '123456A', "phone": ""}
+   pre: "自动创建用户"
+
+ - case_name: "修改用户信息-用户名"
+   interface: "updateUser"
+   expect_code: 200
+   expect_msg: "Success"
+   payload: {"userName": "自动修改用户名", "email": '', "phone": ''}
+   pre: {"userName": "新增待修改用户", "email": '', "password": '123456A', "phone": ""}
+
+ - case_name: "删除用户"
+   interface: "delUser"
+   expect_code: 200
+   expect_msg: "Success"
+   payload: {"userName": "前置用户待删除", "email": '', "password": '123456A', "phone": ""}
+   pre: "前置用户待删除"

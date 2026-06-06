@@ -1,0 +1,14 @@
+INFO     Inspection:conftest.py:129 删除用户前置处理器
+INFO     Inspection:conftest.py:135 删除用户参数 pre: {'del_user': {'case_name': '删除用户', 'interface': 'delUser', 'expect_code': 200, 'expect_msg': 'Success', 'payload': {'userName': '前置用户待删除', 'email': '', 'password': '123456A', 'phone': ''}, 'pre': '前置用户待删除'}}
+INFO     Inspection:conftest.py:140 删除-新增用户名: 前置用户待删除
+INFO     Inspection:conftest.py:141 删除-payloads: {'userName': '前置用户待删除', 'email': '', 'password': '123456A', 'phone': ''}
+INFO     Inspection:conftest.py:86 发送请求 --> GET https://ytest.gpstracktech.com/webapi/user/getUserTree
+INFO     Inspection:conftest.py:145 前置-用户树接口响应: [{'id': 310, 'parentId': 241, 'order': 0, 'name': 'you2', 'customerKey': 'a8f01f6b-8c76-4fbe-9dbb-a14a050918ca', 'money': 0, 'phone': None, 'createTime': '2024-01-25 14:13:11', 'webUrl': '000', 'label': 'you2', 'paymentLink': 'http://web.global-iot.m2mzy.com/#/?iccid=', 'userName': 'you2', 'email': ''}]
+INFO     Inspection:conftest.py:147 前置-查找删除用户: None
+INFO     Inspection:conftest.py:86 发送请求 --> POST https://ytest.gpstracktech.com/webapi/user/addUser
+INFO     Inspection:conftest.py:154 前置新增用户: {'code': 200, 'data': {'userId': 2043, 'parentId': 241, 'userName': '前置用户待删除', 'email': None, 'config': {'SHOWINTRODUCTION': 'true'}, 'password': 'n1it8C15ihEkcrLI2iFVVQ==', 'phone': None, 'permission': '', 'webUrl': None, 'remark': None, 'customerKey': 'c9b705da-aec3-4301-8dd1-1b7be002e5f5', 'whiteIp': '127.0.0.1'}, 'msg': 'Success', 'total': None, 'extend': None, 'empty': False}
+INFO     Inspection:conftest.py:86 发送请求 --> GET https://ytest.gpstracktech.com/webapi/user/getUserTree
+INFO     Inspection:conftest.py:86 发送请求 --> GET https://ytest.gpstracktech.com/webapi/user/delUser
+INFO     Inspection:conftest.py:86 发送请求 --> GET https://ytest.gpstracktech.com/webapi/user/getUserTree
+INFO     Inspection:conftest.py:159 后置-用户树接口响应: [{'id': 310, 'parentId': 241, 'order': 0, 'name': 'you2', 'customerKey': 'a8f01f6b-8c76-4fbe-9dbb-a14a050918ca', 'money': 0, 'phone': None, 'createTime': '2024-01-25 14:13:11', 'webUrl': '000', 'label': 'you2', 'paymentLink': 'http://web.global-iot.m2mzy.com/#/?iccid=', 'userName': 'you2', 'email': ''}]
+INFO     Inspection:conftest.py:162 后置-查找用户结果: None

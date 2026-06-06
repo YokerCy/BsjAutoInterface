@@ -1,0 +1,8 @@
+2026-06-04 09:59:48,730 - INFO - conftest.py[line:92] - 新增用户前置执行
+2026-06-04 09:59:48,730 - INFO - conftest.py[line:86] - 发送请求 --> GET https://ytest.gpstracktech.com/webapi/user/getUserTree
+2026-06-04 09:59:48,848 - INFO - conftest.py[line:100] - 获取接口响应: [{'id': 310, 'parentId': 241, 'order': 0, 'name': 'you2', 'customerKey': 'a8f01f6b-8c76-4fbe-9dbb-a14a050918ca', 'money': 0, 'phone': None, 'createTime': '2024-01-25 14:13:11', 'webUrl': '000', 'label': 'you2', 'paymentLink': 'http://web.global-iot.m2mzy.com/#/?iccid=', 'userName': 'you2', 'email': ''}]
+2026-06-04 09:59:48,848 - INFO - conftest.py[line:103] - 新增用户参数 pre: {'add_user': {'case_name': '新增用户', 'interface': 'addUser', 'expect_code': 200, 'expect_msg': 'Success', 'payload': {'userName': '自动创建用户', 'email': '', 'password': '123456A', 'phone': ''}, 'pre': '自动创建用户'}}
+2026-06-04 09:59:48,849 - INFO - conftest.py[line:115] - 新增用户前置用户空
+2026-06-04 09:59:48,850 - INFO - conftest.py[line:86] - 发送请求 --> POST https://ytest.gpstracktech.com/webapi/user/addUser
+2026-06-04 09:59:48,947 - INFO - conftest.py[line:86] - 发送请求 --> GET https://ytest.gpstracktech.com/webapi/user/getUserTree
+2026-06-04 09:59:49,041 - INFO - conftest.py[line:86] - 发送请求 --> GET https://ytest.gpstracktech.com/webapi/user/delUser

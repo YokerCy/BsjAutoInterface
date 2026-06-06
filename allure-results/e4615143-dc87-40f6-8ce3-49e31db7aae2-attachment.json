@@ -1,0 +1,103 @@
+{
+  "code": 200,
+  "data": {
+    "parking": 0,
+    "offLine": 2,
+    "bkdCount": 0,
+    "neverOnline": 0,
+    "onlineNum": 0,
+    "list": [
+      {
+        "groupId": 390,
+        "userId": 241,
+        "groupName": "DEFAULT_GROUP",
+        "key": "390",
+        "label": "DEFAULT_GROUP",
+        "value": "390",
+        "children": [
+          {
+            "key": "390_89641",
+            "value": "390_89641",
+            "label": "15900000070",
+            "plate": "15900000070",
+            "vehicleId": 89641,
+            "groupId": 390,
+            "terminalNo": "15900000070",
+            "vehicleType": 1,
+            "expireDate": "2026-09-03 09:19:11",
+            "vehicleState": 0,
+            "posState": 5,
+            "terminalType": "ED02R",
+            "terminalTypeAlias": "ED02R",
+            "accState": 1,
+            "videoType": 1,
+            "vehicleTypeEnum": 1,
+            "lon": 0.0,
+            "lat": 0.0,
+            "direct": 10,
+            "speed": 60.0,
+            "terminalClassify": 1,
+            "attentionState": 0,
+            "cameraNum": 4,
+            "cameraLine": "[1,2,3,4]",
+            "iconType": "1",
+            "protocol": 1,
+            "doorNameStr": null,
+            "locateMode": 0
+          }
+        ]
+      },
+      {
+        "groupId": 489,
+        "userId": 241,
+        "groupName": "***REMOVED***",
+        "key": "489",
+        "label": "***REMOVED***",
+        "value": "489",
+        "children": [
+          {
+            "key": "489_27106",
+            "value": "489_27106",
+            "label": "11222111222",
+            "plate": "11222111222",
+            "vehicleId": 27106,
+            "groupId": 489,
+            "terminalNo": "11222111222",
+            "vehicleType": 1,
+            "expireDate": "2026-09-03 09:17:51",
+            "vehicleState": 0,
+            "posState": 5,
+            "terminalType": "ED02R",
+            "terminalTypeAlias": "ED02R",
+            "accState": 1,
+            "videoType": 1,
+            "vehicleTypeEnum": 1,
+            "lon": 0.0,
+            "lat": 0.0,
+            "direct": 10,
+            "speed": 60.0,
+            "terminalClassify": 1,
+            "attentionState": 0,
+            "cameraNum": 4,
+            "cameraLine": "[1,2,3,4]",
+            "iconType": null,
+            "protocol": 1,
+            "doorNameStr": null,
+            "locateMode": 0
+          }
+        ]
+      }
+    ],
+    "requestTime": "1780538387461",
+    "driving": 0,
+    "idling": 0,
+    "total": 2,
+    "viUpdateTime": "0",
+    "expire": 0,
+    "offlineNum": 2
+  },
+  "msg": "Success",
+  "total": null,
+  "extend": null,
+  "empty": false
+}
