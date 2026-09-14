@@ -41,3 +41,5 @@ endpoints:
   real_time_location_api: "/monitor/getRealTimeInfo"
   get_alarm_type: "/alarm/getAlarmType"
   alarm_info: "/alarm/getAlarmInfo"
+  ai_event_alarm_info: "/alarm/recentlyAdasList"
+  parking_record: "/parkingReport/list"

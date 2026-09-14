@@ -1,0 +1,4 @@
+- case_name: "获取停车记录"
+  interface: "get_parking_records"
+  expect_code: 200
+  expect_msg: "Success"

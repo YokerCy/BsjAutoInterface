@@ -23,7 +23,7 @@ def test_query_device_historical_trajectory(user_client, historical_trajectory):
     allure.dynamic.description(
         f"预期校验点：{historical_trajectory['expect_code']} / {historical_trajectory['expect_msg']}")
 
-    # value = historical_trajectory["payload"]
+    # value = historical_trajectory.yaml["payload"]
     # queryparam = value["queryparam"]
     trajectory_api = HistoricalTrajectoryApi(user_client)
 
@@ -50,7 +50,7 @@ def test_device_real_time_location(user_client, get_real_time_location):
     allure.dynamic.description(
         f"预期校验点：{get_real_time_location['expect_code']} / {get_real_time_location['expect_msg']}")
 
-    # value = historical_trajectory["payload"]
+    # value = historical_trajectory.yaml["payload"]
     # queryparam = value["queryparam"]
 
 
@@ -68,4 +68,4 @@ def test_device_real_time_location(user_client, get_real_time_location):
 
     assert real_time_location_api['code'] == code
 
-    # assert real_time_location_api['msg'] == msg
+    assert real_time_location_api['msg'] == msg

@@ -11,3 +11,4 @@
    expect_msg: "Success"
    payload: {"group_name": "auto_delete"}
    pre: "auto_delete"
+

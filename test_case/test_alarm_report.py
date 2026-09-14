@@ -51,6 +51,7 @@ def test_get_alarm_type(user_client, get_alarm_type):
     cfg.get_cases_by_interface("alarm_report","get_alarm_information")
 )
 def test_get_ai_event_information(user_client, get_alarm_information):
+    # AI告警
     allure.dynamic.title(get_alarm_information["case_name"])  # 在报告左侧显示具体的用例名
     allure.dynamic.description(f"预期校验点：{get_alarm_information["expect_code"]} / {get_alarm_information['expect_msg']}")
     device_id = get_alarm_information["payload"]["device_id"]
@@ -78,3 +79,17 @@ def test_get_ai_event_information(user_client, get_alarm_information):
     get_msg = alarm_information.get("msg")
     print(f"返回的消息为：:{get_msg}")
 
+def test_get_general_alarm_information(user_client, get_general_alarm):
+    # 常规告警
+    allure.dynamic.title(get_general_alarm["case_name"])  # 在报告左侧显示具体的用例名
+    allure.dynamic.description(f"预期校验点：{get_general_alarm["expect_code"]} / {get_general_alarm['expect_msg']}")
+    device_id = get_general_alarm["payload"]["device_id"]
+
+    alarm_report_api = AlarmReport(user_client)
+    general_alarm = alarm_report_api.get_general_alarm_message(device_id)
+
+  # 如果正常响应，则进行正常断言
+    code = general_alarm.get("code")
+    assert code == general_alarm["expect_code"]
+    get_msg = general_alarm.get("msg")
+    print(f"返回的消息为：:{get_msg}")

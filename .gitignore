@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Test artifacts
+allure-results/
+allure-report/
+report/
+
+# IDE
+.idea/
+.vscode/
+
+# Logs
+logs/
+*.log
+
+# Local config (real secrets) — keep *.example.yaml tracked
+conf/config.local.yaml
+
+# Virtual envs
+venv/
+env/
+.venv/

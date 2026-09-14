@@ -1,1 +1,0 @@
-INFO     Inspection:conftest.py:137 开放接口请求 --> POST https://ytest.gpstracktech.com/api/alarm/getAlarmInfo

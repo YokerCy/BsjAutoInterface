@@ -1,1 +1,0 @@
-INFO     Inspection:conftest.py:86 发送请求 --> GET https://ytest.gpstracktech.com/webapi/alarm/getAlarmType

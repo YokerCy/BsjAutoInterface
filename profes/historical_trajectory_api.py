@@ -25,8 +25,8 @@ class HistoricalTrajectoryApi:
                 "posStatus": 0,
                 "queryType": 0,
                 "queryParam": "15900000070",
-                "beginTime": "2026-03-17 00:00:00",
-                "endTime": "2026-03-18 01:00:00"
+                "beginTime": "2026-06-10 00:00:00",
+                "endTime": "2026-06-12 01:00:00"
         })
         return res.json()
 

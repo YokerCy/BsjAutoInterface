@@ -1,1 +1,0 @@
-https://ytest.gpstracktech.com/api/alarm/getAlarmInfo
