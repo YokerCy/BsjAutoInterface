@@ -4,5 +4,5 @@
   expect_msg: "Success"
 
 - case_name: "检索设备的最新实时位置和状态信息"
-  interface: "real_time_location"
+  interface: "get_real_time_location"
   expect_code: 200

@@ -6,12 +6,10 @@ from base.redConfig import Config
 from base.utils import allure_attach_comparison
 from profes.historical_trajectory_api import HistoricalTrajectoryApi
 
-#
-#
+
 cfg = Config()
 
 
-#
 @allure.epic("历史轨迹")
 @allure.feature("查询历史轨迹信息")
 @pytest.mark.parametrize(
@@ -23,20 +21,24 @@ def test_query_device_historical_trajectory(user_client, historical_trajectory):
     allure.dynamic.description(
         f"预期校验点：{historical_trajectory['expect_code']} / {historical_trajectory['expect_msg']}")
 
-    # value = historical_trajectory.yaml["payload"]
-    # queryparam = value["queryparam"]
     trajectory_api = HistoricalTrajectoryApi(user_client)
+    resp = trajectory_api.get_query_device_historical_trajectory()
 
-    historical_trajectory_api = trajectory_api.get_query_device_historical_trajectory()
+    actual_code = resp.get("code")
+    actual_msg = resp.get("msg")
 
-    code = historical_trajectory["expect_code"]
-    msg = historical_trajectory["expect_msg"]
+    # 关键：附件对比必须是「实际响应」vs「预期」，不能拿预期比预期（假绿）
+    allure_attach_comparison(expected=historical_trajectory["expect_code"], actual=actual_code, name="响应状态码")
+    allure_attach_comparison(expected=historical_trajectory["expect_msg"], actual=actual_msg, name="响应消息状态")
 
-    allure_attach_comparison(expected=historical_trajectory["expect_code"], actual=code, name="响应状态码")
-    allure_attach_comparison(expected=historical_trajectory["expect_msg"], actual=msg, name="响应消息状态")
+    assert actual_code == historical_trajectory["expect_code"], \
+        f"历史轨迹接口返回码异常: 期望 {historical_trajectory['expect_code']}, 实际 {actual_code}, msg={actual_msg}"
+    assert actual_msg == historical_trajectory["expect_msg"], \
+        f"历史轨迹接口返回消息异常: 期望 {historical_trajectory['expect_msg']}, 实际 {actual_msg}"
 
-    assert historical_trajectory_api["code"] == code
-    # assert historical_trajectory_api["msg"] == msg
+    # 结构校验：成功响应应包含轨迹列表，避免只验 code 不验结构导致的假绿
+    if actual_code == 200:
+        assert isinstance(resp.get("data", {}).get("trackList"), list), "data.trackList 应为列表"
 
 
 @allure.epic("历史轨迹")
@@ -50,22 +52,16 @@ def test_device_real_time_location(user_client, get_real_time_location):
     allure.dynamic.description(
         f"预期校验点：{get_real_time_location['expect_code']} / {get_real_time_location['expect_msg']}")
 
-    # value = historical_trajectory.yaml["payload"]
-    # queryparam = value["queryparam"]
-
-
     device_real_time_location = HistoricalTrajectoryApi(user_client)
+    resp = device_real_time_location.real_time_location()
 
-    real_time_location_api = device_real_time_location.real_time_location()
+    actual_code = resp.get("code")
+    actual_msg = resp.get("msg")
 
-    code = get_real_time_location["expect_code"]
-    msg = get_real_time_location["expect_msg"]
+    allure_attach_comparison(expected=get_real_time_location["expect_code"], actual=actual_code, name="响应状态码")
+    allure_attach_comparison(expected=get_real_time_location["expect_msg"], actual=actual_msg, name="响应消息状态")
 
-
-
-    allure_attach_comparison(expected=get_real_time_location["expect_code"], actual=code, name="响应状态码")
-    allure_attach_comparison(expected=get_real_time_location["expect_msg"], actual=msg, name="响应消息状态")
-
-    assert real_time_location_api['code'] == code
-
-    assert real_time_location_api['msg'] == msg
+    assert actual_code == get_real_time_location["expect_code"], \
+        f"实时位置接口返回码异常: 期望 {get_real_time_location['expect_code']}, 实际 {actual_code}, msg={actual_msg}"
+    assert actual_msg == get_real_time_location["expect_msg"], \
+        f"实时位置接口返回消息异常: 期望 {get_real_time_location['expect_msg']}, 实际 {actual_msg}"

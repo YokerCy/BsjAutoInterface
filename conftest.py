@@ -131,7 +131,7 @@ def user_client(env):
 
             # 2. 处理路径参数 {id}
             if "path_params" in kwargs:
-                path = path.format(**kwargs.pop("endpoint_key"))
+                path = path.format(**kwargs.pop("path_params"))
 
             url = f"{self.base_api_url.rstrip('/')}/{path.lstrip('/')}"
             logger.info(f"开放接口请求 --> {method} {url}")
@@ -215,7 +215,7 @@ def api_client(env):
 
             # 2. 处理路径参数 {id}
             if "path_params" in kwargs:
-                path = path.format(**kwargs.pop("endpoint_key"))
+                path = path.format(**kwargs.pop("path_params"))
 
             url = f"{self.base_api_url.rstrip('/')}/{path.lstrip('/')}"
             logger.info(f"开放接口请求 --> {method} {url}")
