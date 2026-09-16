@@ -11,6 +11,14 @@ def _recent_range(days=7):
     return start_time, end_time
 
 
+# 依据 /alarm/getAlarmInfo 官方文档：
+#   ids        -> number[]  必填，告警类型ID，示例 [17]（注意是数字不是字符串）
+#   queryParams-> string[]  必填，设备名/设备ID，示例 ["authTest1"]（数组）
+#   queryType  -> 0 按设备名 / 1 按设备ID
+#   startTime/endTime -> yyyy-MM-dd HH:mm:ss
+ALARM_IDS = [21, 33]
+
+
 class AlarmReport:
     def __init__(self, client):
         self.client = client
@@ -31,63 +39,51 @@ class AlarmReport:
             "POST",
             "alarm_info",
             json={
-                "ids": ["21",
-                        "33"],
+                "ids": ALARM_IDS,
                 "pageNumber": 1,
                 "pageSize": 10,
-                "queryParams": device_id,
+                "queryParams": [device_id],
                 "queryType": 0,
                 "startTime": start_time,
                 "endTime": end_time
             }
         )
-        # 调试：查看实际响应内容
-        # print("Status Code:", res.status_code)
-        # print("Response Text:", res.text)  # 查看为什么无法解析为 JSON
         return res.json()
 
-        # 获取ai报警数据
+    # 获取ai报警数据
     def get_ai_event_alarm_message(self, device_id):
         start_time, end_time = _recent_range()
         res = self.client.send_api(
             "POST",
             "ai_event_alarm_info",
             json={
-                "ids": ["21",
-                        "33"],
+                "ids": ALARM_IDS,
                 "pageNumber": 1,
                 "pageSize": 10,
-                "queryParams": device_id,
+                "queryParams": [device_id],
                 "queryType": 0,
                 "startTime": start_time,
                 "endTime": end_time
             }
         )
-        # 调试：查看实际响应内容
-        # print("Status Code:", res.status_code)
-        # print("Response Text:", res.text)  # 查看为什么无法解析为 JSON
         return res.json()
 
-        # 获取常规告警
+    # 获取常规告警
     def get_general_alarm_message(self, device_id):
         start_time, end_time = _recent_range()
         res = self.client.send_api(
             "POST",
             "get_general_alarm",
             json={
-                "ids": ["21",
-                        "33"],
+                "ids": ALARM_IDS,
                 "pageNumber": 1,
                 "pageSize": 10,
-                "queryParams": device_id,
+                "queryParams": [device_id],
                 "queryType": 0,
                 "startTime": start_time,
                 "endTime": end_time
             }
         )
-        # 调试：查看实际响应内容
-        # print("Status Code:", res.status_code)
-        # print("Response Text:", res.text)  # 查看为什么无法解析为 JSON
         return res.json()
 
     #获取停车报表
@@ -97,19 +93,15 @@ class AlarmReport:
             "POST",
             "parking_record",
             json={
-                "ids": ["21",
-                        "33"],
+                "ids": ALARM_IDS,
                 "pageNumber": 1,
                 "pageSize": 10,
-                "queryParams": device_id,
+                "queryParams": [device_id],
                 "queryType": 0,
                 "startTime": start_time,
                 "endTime": end_time
             }
         )
-        # 调试：查看实际响应内容
-        # print("Status Code:", res.status_code)
-        # print("Response Text:", res.text)  # 查看为什么无法解析为 JSON
         return res.json()
 
     #获取里程报表
@@ -121,13 +113,10 @@ class AlarmReport:
             json={
                 "pageNumber": 1,
                 "pageSize": 10,
-                "queryParams": device_id,
+                "queryParams": [device_id],
                 "queryType": 0,
                 "startTime": start_time,
                 "endTime": end_time
             }
         )
-        # 调试：查看实际响应内容
-        # print("Status Code:", res.status_code)
-        # print("Response Text:", res.text)  # 查看为什么无法解析为 JSON
         return res.json()
