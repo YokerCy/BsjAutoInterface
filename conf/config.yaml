@@ -43,3 +43,5 @@ endpoints:
   alarm_info: "/alarm/getAlarmInfo"
   ai_event_alarm_info: "/alarm/recentlyAdasList"
   parking_record: "/parkingReport/list"
+  mileage_report: "/mileageReport/list"
+  get_general_alarm: "get_general_alarm"
