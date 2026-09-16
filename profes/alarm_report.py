@@ -86,20 +86,29 @@ class AlarmReport:
         )
         return res.json()
 
-    #获取停车报表
-    def get_parking_report_list(self, device_id):
-        start_time, end_time = _recent_range()
+    # 获取停车报表（POST /parkingReport/list）
+    # 依据官方文档：
+    #   queryParams -> string[]（设备名/设备ID，按列表传入）
+    #   queryType   -> 0 按设备名 / 1 按设备ID
+    #   startTime/endTime -> yyyy-MM-dd HH:mm:ss
+    #   pageNumber/pageSize -> 分页（默认 1 / 50）
+    # 注意：停车报表接口没有 ids 字段，原 stub 误带了 ids=ALARM_IDS，已移除。
+    def get_parking_report_list(self, device_id,
+                                query_type=1,
+                                start_time="2023-10-23 00:00:00",
+                                end_time="2023-10-24 23:59:59",
+                                page_number=0,
+                                page_size=10):
         res = self.client.send_api(
             "POST",
             "parking_record",
             json={
-                "ids": ALARM_IDS,
-                "pageNumber": 1,
-                "pageSize": 10,
-                "queryParams": [device_id],
-                "queryType": 0,
                 "startTime": start_time,
-                "endTime": end_time
+                "endTime": end_time,
+                "pageNumber": page_number,
+                "pageSize": page_size,
+                "queryParams": [device_id],
+                "queryType": query_type
             }
         )
         return res.json()

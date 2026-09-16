@@ -2,3 +2,4 @@
   interface: "get_parking_records"
   expect_code: 200
   expect_msg: "Success"
+  payload: {"device_id": "13342746312"}
