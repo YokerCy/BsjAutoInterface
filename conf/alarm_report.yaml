@@ -8,10 +8,15 @@
   interface: "get_alarm_information"
   expect_code: 200
   expect_msg: "Success"
-  payload: {"device_id": ["15900000070"]}
+  payload: {"device_id": "15900000070"}
 
 - case_name: "获取ai事件信息"
   interface: "get_ai_event_alarm_information"
   expect_code: 200
   expect_msg: "Success"
 
+- case_name: "获取里程报表数据"
+  interface: "get_mileage_report"
+  expect_code: 200
+  expect_msg: "Success"
+  payload: {"device_id": "15900000070"}
