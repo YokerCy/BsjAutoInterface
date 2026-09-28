@@ -1,0 +1,33 @@
+# 通知与报告配置（非敏感配置，可安全入库）
+#
+# 约定：企微 webhook 等敏感值放 conf/config.local.yaml（已在 .gitignore 中），
+#       不要把机器人 key 写进本文件或提交到仓库。
+
+notify:
+  enabled: true
+
+  # 推送策略：
+  #   on_new_failure  = 仅当「相比上次运行出现了新增失败」才推送（推荐，避免告警疲劳）
+  #   always          = 每次运行都推
+  #   never           = 从不推送
+  policy: "on_new_failure"
+
+  # 首次运行（没有历史快照基线）时如何处理：
+  #   true  = 把所有失败视为「新增」并推送（建议保留，否则第一次真出问题会漏报）
+  #   false = 首次运行不推送，只建立基线
+  first_run_as_new: true
+
+  # 是否 @ 提醒。企微 markdown 类型不支持 @，
+  # 开启后会在 markdown 摘要之外，额外发一条 text 类型消息做 @ 提醒。
+  mention_on_push: false
+  # 需要 @ 的人：填企微 userid（不是手机号/昵称），多个用逗号或列表
+  mention_userids: []
+
+  # 上次运行结果的快照文件（用于计算「新增失败」）
+  snapshot_path: "logs/last_result.json"
+
+report:
+  # 是否生成静态报告（用 allure generate，不弹浏览器、不阻塞、localhost 外部可达依赖自行托管）
+  # 注意：企微推送走的是「纯文字摘要」，不依赖这里的报告地址。
+  generate: true
+  output_dir: "./allure-report"
