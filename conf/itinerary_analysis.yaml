@@ -1,0 +1,15 @@
+# 行程分析（POST /itineraryAnalysis/getItineraryAnalysisPageData）
+# 说明：
+#   vehicleIds -> number[]  必填，车辆ID（数字数组，注意不是设备号字符串）
+#   startTime / endTime -> yyyy-MM-dd HH:mm:ss
+#   filterStatus -> 0 全部 / 其他值按平台定义（当前沿用抓包值 0）
+# 日期先写死，后续造数据后再改成动态最近 N 天
+- case_name: "获取行程分析分页数据"
+  interface: "get_itinerary_analysis_page_data"
+  expect_code: 200
+  expect_msg: "Success"
+  payload:
+    vehicle_ids: [89641]
+    startTime: "2026-09-29 00:00:00"
+    endTime: "2026-09-29 23:59:59"
+    filterStatus: 0

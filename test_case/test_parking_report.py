@@ -11,7 +11,7 @@ cfg = Config()
 # 官方文档定义 /parkingReport/list 响应 data[] 中每条记录应包含的结构字段
 PARKING_DATA_KEYS = {
     "deviceName", "deviceId", "deviceType",
-    "group", "startTime", "endTime", "drivingTime"
+    "group", "startTime", "endTime"
 }
 
 

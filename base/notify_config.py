@@ -15,14 +15,16 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT = {
     "notify": {
         "enabled": True,
-        "policy": "on_new_failure",
+        "policy": "always",
         "first_run_as_new": True,
         "mention_on_push": False,
         "mention_userids": [],
         "snapshot_path": "logs/last_result.json",
     },
     "report": {
-        "generate": True,
+        "mode": "serve",        # serve / generate / none
+        "serve_port": 0,
+        "open_browser": True,
         "output_dir": "./allure-report",
     },
     "wechat": {},
@@ -61,3 +63,38 @@ def get_webhook(cfg=None):
     if ("把这里换成" in url) or ("your_key" in url) or (not url.startswith("http")):
         return ""
     return url
+
+
+def validate_webhook(url):
+    """
+    校验企微 webhook 地址格式，返回 (是否合法, 问题描述)。
+
+    常见错误：把整条 webhook 地址又粘到了 key= 后面
+    （表现为 key 的值以 http 开头且长度很长），
+    此时请求会返回 errcode=93000 invalid webhook url，
+    但 HTTP 状态码仍是 200 —— 极易被误判成「发送成功」。
+    """
+    if not url:
+        return False, "webhook 未配置"
+
+    from urllib.parse import urlparse, parse_qs
+
+    parsed = urlparse(url)
+    if parsed.netloc != "qyapi.weixin.qq.com":
+        return False, f"域名应为 qyapi.weixin.qq.com，实际为 {parsed.netloc or '(空)'}"
+    if "/cgi-bin/webhook/send" not in parsed.path:
+        return False, f"路径应为 /cgi-bin/webhook/send，实际为 {parsed.path or '(空)'}"
+
+    qs = parse_qs(parsed.query)
+    key = (qs.get("key") or [""])[0]
+    if not key:
+        return False, "缺少 key 参数"
+    if key.startswith("http"):
+        return False, (
+            "key 的值看起来是整条 URL —— 你可能把完整的 webhook 地址粘到了 key= 后面。"
+            "key 应只是那段 32 位左右的字符串（形如 693a91f6-xxxx-xxxx-xxxx-xxxxxxxxxxxx）"
+        )
+    if len(key) > 64:
+        return False, f"key 长度异常（{len(key)} 位），企微机器人 key 通常为 32 位左右"
+
+    return True, "OK"

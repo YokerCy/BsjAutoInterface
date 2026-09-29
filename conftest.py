@@ -10,8 +10,11 @@ import pytest
 import requests
 import allure
 import json
+import re
+import time
 from base.log import logger
 from base.redConfig import Config
+from base.throttle import throttle
 
 
 @pytest.fixture(scope="session")
@@ -98,7 +101,7 @@ def user_client(env):
             # 4. 重新放回 kwargs 中发送
             kwargs["params"] = all_params
 
-            res = self.session.request(method, url, **kwargs)
+            res = self._request_with_retry(method, url, endpoint_key=endpoint_key, **kwargs)
 
             try:
                 # 记录请求 URL
@@ -119,12 +122,66 @@ def user_client(env):
             # 执行请求：此时 self.session 已带 Token，kwargs 已带合并后的 params 和 json
             return res
 
+        def _request_with_retry(self, method, url, max_retries=3, endpoint_key=None, **kwargs):
+            """
+            带「主动节流 + 限流自动重试」的请求。
+
+            背景：服务端在请求过频时会返回
+                {"code": 503, "msg": "Rate limit exceeded. Please retry in 120 seconds.",
+                 "subCode": "server.busy.retry"}
+            这属于「请求被拒」，不是接口坏了 —— 断言失败会污染巡检结果（假红）。
+
+            两道防线：
+              1) 主动节流（throttle）：请求前就按接口限制控制频率，降低撞上限流的概率
+              2) 被动重试：万一仍被限流，按服务端提示的秒数等待后重试；
+                 重试仍失败则把最后一次响应原样返回，交由断言报错（保证不掩盖真问题）。
+            """
+            res = None
+            for attempt in range(1, max_retries + 1):
+                # 第一道防线：主动节流（首次请求前也走一次，保证与上次调用的间隔）
+                if endpoint_key:
+                    throttle(endpoint_key)
+
+                res = self.session.request(method, url, **kwargs)
+                try:
+                    body = res.json()
+                except Exception:
+                    return res  # 非 JSON（网关错误页等），不做限流判定
+
+                is_limited = (
+                    body.get("code") == 503
+                    or body.get("subCode") == "server.busy.retry"
+                    or "rate limit" in str(body.get("msg", "")).lower()
+                )
+                if not is_limited:
+                    return res
+
+                # 从 msg 里解析服务端要求的等待秒数（如 "retry in 120 seconds"）
+                wait = 120
+                m = re.search(r"retry in (\d+)", str(body.get("msg", "")))
+                if m:
+                    wait = int(m.group(1))
+                wait = min(wait, 180)  # 上限保护，避免异常值把用例挂死
+
+                if attempt < max_retries:
+                    logger.warning(
+                        f"⏳ 触发接口限流（第 {attempt}/{max_retries} 次），"
+                        f"按服务端提示等待 {wait}s 后重试: {url}"
+                    )
+                    time.sleep(wait)
+                else:
+                    logger.error(
+                        f"❌ 限流重试 {max_retries} 次仍失败，返回最后一次响应: {url}"
+                    )
+            return res
+
         def send_api(self, method, endpoint_key, **kwargs):
             """
                 开放接口请求（用 base_api_url）
                 - 自动拼接 base_api_url
                 - session 已带 key/version/Accept-Language/Content-Type
                 - 不需要 token
+                - 自动处理限流重试，避免「被限流」被误判成接口失败
             """
             # 1. 获取基础路由
             path = self.config.get_endpoint(endpoint_key)
@@ -136,7 +193,7 @@ def user_client(env):
             url = f"{self.base_api_url.rstrip('/')}/{path.lstrip('/')}"
             logger.info(f"开放接口请求 --> {method} {url}")
 
-            res = self.session.request(method, url, **kwargs)
+            res = self._request_with_retry(method, url, endpoint_key=endpoint_key, **kwargs)
 
             try:
                 allure.attach(res.url, name="请求URL",
@@ -209,6 +266,40 @@ def api_client(env):
                 "Content-Type": "application/json",
             })
 
+        def _request_with_retry(self, method, url, max_retries=3, **kwargs):
+            """带限流自动重试的请求，逻辑同 user_client（避免被限流误判成接口失败）。"""
+            res = None
+            for attempt in range(1, max_retries + 1):
+                res = self.session.request(method, url, **kwargs)
+                try:
+                    body = res.json()
+                except Exception:
+                    return res
+
+                is_limited = (
+                    body.get("code") == 503
+                    or body.get("subCode") == "server.busy.retry"
+                    or "rate limit" in str(body.get("msg", "")).lower()
+                )
+                if not is_limited:
+                    return res
+
+                wait = 120
+                m = re.search(r"retry in (\d+)", str(body.get("msg", "")))
+                if m:
+                    wait = int(m.group(1))
+                wait = min(wait, 180)
+
+                if attempt < max_retries:
+                    logger.warning(
+                        f"⏳ 触发接口限流（第 {attempt}/{max_retries} 次），"
+                        f"按服务端提示等待 {wait}s 后重试: {url}"
+                    )
+                    time.sleep(wait)
+                else:
+                    logger.error(f"❌ 限流重试 {max_retries} 次仍失败，返回最后一次响应: {url}")
+            return res
+
         def send_api(self, method, endpoint_key, **kwargs):
             # 1. 获取基础路由
             path = self.config.get_endpoint(endpoint_key)
@@ -220,7 +311,7 @@ def api_client(env):
             url = f"{self.base_api_url.rstrip('/')}/{path.lstrip('/')}"
             logger.info(f"开放接口请求 --> {method} {url}")
 
-            res = self.session.request(method, url, **kwargs)
+            res = self._request_with_retry(method, url, endpoint_key=endpoint_key, **kwargs)
 
             try:
                 allure.attach(res.url, name="请求URL",

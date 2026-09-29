@@ -2,6 +2,20 @@
   interface: "get_historical_trajectory"
   expect_code: 200
   expect_msg: "Success"
+  # 请求条件集中在这里，改配置即可，不需要改代码
+  # 以下组合由 tools/diagnose_trajectory.py 实测得出（2026-09-28 验证可用）
+  payload:
+    query_param: "15900000070"
+    # 0=按设备名(plate)  1=按设备ID(terminalNo)
+    # 实测：该设备需用 1（界面上取名虽显示为数字，但服务端要按设备ID查）
+    query_type: 1
+    filter_time: 0
+    stop_status: 1          # 0:过滤停车数据 1:不过滤
+    # ⚠️ 关键项：0=仅已定位 1=全部(含未定位) 2=仅未定位
+    # 之前用 0 时返回 No Data —— 该设备当天轨迹均为未定位点，被 posStatus=0 过滤掉了
+    pos_status: 1
+    begin_time: "2026-09-28 00:00:00"
+    end_time: "2026-09-28 23:59:59"
 
 - case_name: "检索设备的最新实时位置和状态信息"
   interface: "get_real_time_location"

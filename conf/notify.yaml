@@ -7,10 +7,10 @@ notify:
   enabled: true
 
   # 推送策略：
-  #   on_new_failure  = 仅当「相比上次运行出现了新增失败」才推送（推荐，避免告警疲劳）
-  #   always          = 每次运行都推
+  #   always          = 每次运行都推送（全绿也推，便于确认巡检正常在跑）—— 当前使用
+  #   on_new_failure  = 仅当「相比上次运行出现了新增失败」才推送（避免告警疲劳）
   #   never           = 从不推送
-  policy: "on_new_failure"
+  policy: "always"
 
   # 首次运行（没有历史快照基线）时如何处理：
   #   true  = 把所有失败视为「新增」并推送（建议保留，否则第一次真出问题会漏报）
@@ -27,7 +27,17 @@ notify:
   snapshot_path: "logs/last_result.json"
 
 report:
-  # 是否生成静态报告（用 allure generate，不弹浏览器、不阻塞、localhost 外部可达依赖自行托管）
-  # 注意：企微推送走的是「纯文字摘要」，不依赖这里的报告地址。
-  generate: true
+  # 运行结束后如何展示报告：
+  #   serve    = 启动 allure 服务并自动打开浏览器，方便本地查看（推荐本地/手动跑时使用）
+  #   generate = 只生成静态报告到 output_dir，不打开浏览器（适合定时任务/CI）
+  #   none     = 都不做，只保留 allure-results 原始数据
+  mode: "serve"
+
+  # serve 模式：报告服务端口（留空则用 allure 随机端口）
+  serve_port: 0
+
+  # serve 模式：是否打开浏览器
+  open_browser: true
+
+  # generate 模式的输出目录
   output_dir: "./allure-report"

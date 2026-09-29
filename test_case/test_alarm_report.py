@@ -47,14 +47,14 @@ def test_get_alarm_type(user_client, get_alarm_type):
         f"[{get_alarm_type['case_name']}] 数据量不足: 期望 >= {get_alarm_type.get('quantity', 1)}, 实际 {len(actual_data)}"
 
 
-@allure.epic("Ai告警报表")
-@allure.feature("查询AI告警信息")
+@allure.epic("获取常规告警")
+@allure.feature("查询获取常规告警")
 @pytest.mark.parametrize(
     "get_alarm_information",
     cfg.get_cases_by_interface("alarm_report", "get_alarm_information")
 )
-def test_get_ai_event_information(user_client, get_alarm_information):
-    # AI告警
+def test_get_alarm_informationn(user_client, get_alarm_information):
+    # 获取告警信息
     allure.dynamic.title(get_alarm_information["case_name"])  # 在报告左侧显示具体的用例名
     allure.dynamic.description(f"预期校验点：{get_alarm_information['expect_code']} / {get_alarm_information['expect_msg']}")
     device_id = _device_id(get_alarm_information)
@@ -75,32 +75,32 @@ def test_get_ai_event_information(user_client, get_alarm_information):
         f"[{get_alarm_information['case_name']}] 返回消息异常: 期望 {get_alarm_information['expect_msg']}, 实际 {actual_msg}"
 
 
-@allure.epic("常规告警报表")
-@allure.feature("查询常规告警信息")
+@allure.epic("AI告警")
+@allure.feature("查询AI告警信息")
 @pytest.mark.parametrize(
-    "get_general_alarm",
-    cfg.get_cases_by_interface("alarm_report", "get_general_alarm")
+    "get_ai_event_alarm",
+    cfg.get_cases_by_interface("alarm_report", "get_ai_event_alarm")
 )
-def test_get_general_alarm_information(user_client, get_general_alarm):
-    # 常规告警
-    allure.dynamic.title(get_general_alarm["case_name"])  # 在报告左侧显示具体的用例名
-    allure.dynamic.description(f"预期校验点：{get_general_alarm['expect_code']} / {get_general_alarm['expect_msg']}")
-    device_id = _device_id(get_general_alarm)
+def test_get_ai_event_alarm_information(user_client, get_ai_event_alarm):
+    # 获取ai告警信息
+    allure.dynamic.title(get_ai_event_alarm["case_name"])  # 在报告左侧显示具体的用例名
+    allure.dynamic.description(f"预期校验点：{get_ai_event_alarm['expect_code']} / {get_ai_event_alarm['expect_msg']}")
+    device_id = _device_id(get_ai_event_alarm)
 
     alarm_report_api = AlarmReport(user_client)
-    general_alarm = alarm_report_api.get_general_alarm_message(device_id)
+    general_alarm = alarm_report_api.get_ai_event_alarm_message(device_id)
 
     actual_code = general_alarm.get("code")
     actual_msg = general_alarm.get("msg")
 
-    allure_attach_comparison(expected=get_general_alarm["expect_code"], actual=actual_code, name="响应状态码")
-    allure_attach_comparison(expected=get_general_alarm["expect_msg"], actual=actual_msg, name="响应消息状态")
+    allure_attach_comparison(expected=get_ai_event_alarm["expect_code"], actual=actual_code, name="响应状态码")
+    allure_attach_comparison(expected=get_ai_event_alarm["expect_msg"], actual=actual_msg, name="响应消息状态")
 
     # 注意：原先错误地用响应体 general_alarm["expect_code"] 做断言（响应里没有该字段，会 KeyError）
-    assert actual_code == get_general_alarm["expect_code"], \
-        f"[{get_general_alarm['case_name']}] 返回码异常: 期望 {get_general_alarm['expect_code']}, 实际 {actual_code}, 响应={json.dumps(general_alarm, ensure_ascii=False)[:1500]}"
-    assert actual_msg == get_general_alarm["expect_msg"], \
-        f"[{get_general_alarm['case_name']}] 返回消息异常: 期望 {get_general_alarm['expect_msg']}, 实际 {actual_msg}"
+    assert actual_code == get_ai_event_alarm["expect_code"], \
+        f"[{get_ai_event_alarm['case_name']}] 返回码异常: 期望 {get_ai_event_alarm['expect_code']}, 实际 {actual_code}, 响应={json.dumps(general_alarm, ensure_ascii=False)[:1500]}"
+    assert actual_msg == get_ai_event_alarm["expect_msg"], \
+        f"[{get_ai_event_alarm['case_name']}] 返回消息异常: 期望 {get_ai_event_alarm['expect_msg']}, 实际 {actual_msg}"
 
 
 @allure.epic("里程报表")
