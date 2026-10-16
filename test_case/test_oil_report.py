@@ -136,7 +136,7 @@ def verify_fuel_response(result, case):
 
 
 @allure.epic("油耗报表")
-@allure.feature("价格单车油耗分析表")
+@allure.feature("单车油耗分析表")
 @pytest.mark.parametrize(
     "get_vehicle_fuel",
     cfg.get_cases_by_interface("oil_report", "get_vehicle_fuel")

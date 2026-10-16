@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 """
-价格单车油耗分析表接口封装（平台私有接口，走 webapi/，用 send_by_key）
+单车油耗分析表接口封装（平台私有接口，走 webapi/，用 send_by_key）
 
 接口：POST /oil/vehicleFuel
 抓包来源：

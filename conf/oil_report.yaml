@@ -12,7 +12,7 @@
 #   若某段时间确实没有油耗数据、只想校验「接口通不通」，把它改成 false。
 #
 # 日期先写死，后续造数据后再改成动态最近 N 天
-- case_name: "获取价格单车油耗分析表"
+- case_name: "获取单车油耗分析表"
   interface: "get_vehicle_fuel"
   expect_code: 200
   expect_msg: "Success"
