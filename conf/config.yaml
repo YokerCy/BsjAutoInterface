@@ -45,4 +45,5 @@ endpoints:
   parking_record: "/parkingReport/list"
   mileage_report: "/mileageReport/list"
   itinerary_analysis: "/itineraryAnalysis/getItineraryAnalysisPageData"
+  oil_vehicle_fuel: "/oil/vehicleFuel"
 

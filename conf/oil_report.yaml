@@ -1,0 +1,25 @@
+# 价格单车油耗分析表（POST /oil/vehicleFuel）
+# 说明：
+#   userId    -> number  传 null 时由代码自动取「当前登录用户ID」（本账号实测为 241）
+#   vehicleId -> number  车辆ID（数字，不是设备号字符串）
+#   startTime / endTime -> yyyy-MM-dd HH:mm:ss
+#   clientTime -> 不配则自动取当前时间（它是「发起请求的时刻」，不宜写死）
+#   unitPrice -> number  油价单价（元/L）
+#
+# require_data: true  -> 要求该时间窗内必须查到数据（曲线点 + 油量通道非空）
+#   实测：无数据时返回 fuel=0/mileage=0/channelIds=null/data=[]，
+#   而「有数据但油耗为 0」时指标同样是 0 —— 只看指标无法区分，会假绿。
+#   若某段时间确实没有油耗数据、只想校验「接口通不通」，把它改成 false。
+#
+# 日期先写死，后续造数据后再改成动态最近 N 天
+- case_name: "获取价格单车油耗分析表"
+  interface: "get_vehicle_fuel"
+  expect_code: 200
+  expect_msg: "Success"
+  require_data: true
+  payload:
+    user_id: null
+    vehicle_id: 89641
+    start_time: "2026-10-16 00:00:00"
+    end_time: "2026-10-16 23:59:59"
+    unit_price: 1

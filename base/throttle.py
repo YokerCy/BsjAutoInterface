@@ -31,6 +31,7 @@ THROTTLE_RULES = {
     "alarm_report": 3,
     "mileage_report": 3,
     "parking_record": 3,
+    "oil_vehicle_fuel": 3,          # 同属报表类查询，与里程/停车保持一致的保守间隔
     # 历史轨迹：官方文档明确「单用户每分钟最多 2 次」
     "historical_trajectory": 35,
 }
