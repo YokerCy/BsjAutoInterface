@@ -1,0 +1,28 @@
+# 温湿度报表（POST /tempHumidityReport/getTempHumidityReport）
+# 说明：
+#   pageNum    -> number   页码，从 1 开始
+#   pageSize   -> number   每页条数
+#   startTime / endTime -> yyyy-MM-dd HH:mm:ss
+#   vehicleIds -> number[] 车辆ID数组（数字，不是设备号字符串）
+#
+# require_data: true  -> 要求该时间窗内必须查到真实温湿度数据
+#   ⚠️ 实测陷阱：时间窗内没有数据时，服务端**不返回空数组**，而是返回一条「占位记录」：
+#        {"vehicleId": 89641, ..., "time": "-", "avgTemp": null, "avgHumidity": null,
+#         "lowTempCount": 0, "highTempCount": 0, "drivingMileage": 0.0}
+#      此时 code=200、msg=Success、data 长度为 1 —— 只看状态码或数组长度会「假绿」。
+#      故本用例用 avgTemp/avgHumidity 是否为 null 来判定数据是否真实存在。
+#      另注：lowTempCount/highTempCount/drivingMileage 在任何情况下都是 0，不可用作判据。
+#   若某时段确实没有温湿度数据、只想校验「接口通不通」，把它改成 false。
+#
+# 日期先写死，后续造数据后再改成动态最近 N 天
+- case_name: "获取温湿度报表"
+  interface: "get_temp_humidity_report"
+  expect_code: 200
+  expect_msg: "Success"
+  require_data: true
+  payload:
+    vehicle_ids: [89641]
+    start_time: "2026-10-16 00:00:00"
+    end_time: "2026-10-16 23:59:59"
+    page_num: 1
+    page_size: 20
