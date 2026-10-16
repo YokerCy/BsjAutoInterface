@@ -13,7 +13,10 @@ import sys
 
 sys.path.insert(0, ".")
 
-from test_case.test_temp_humidity_report import verify_temp_humidity_response
+from test_case.test_temp_humidity_report import (
+    verify_temp_humidity_response,
+    verify_temp_humidity_detail_response,
+)
 
 # ---- 真实捕获：有数据（10-16） ----
 RECORD_WITH_DATA = {
@@ -103,6 +106,87 @@ def main():
 
     # 8) 空数组 + require_data=true -> 应失败
     results.append(run("空数组 + require_data=true", {"code": 200, "msg": "Success", "data": []}, False))
+
+    # ==================== 详情接口 ====================
+    print()
+    print("=" * 78)
+    print("详情接口 /tempHumidityReport/getTempHumidityDetailReport")
+    print("=" * 78)
+
+    # ---- 真实捕获：详情有数据（10-16，2 条） ----
+    detail_record = {
+        "deviceName": "15900000070", "deviceId": "15900000070",
+        "group": "DEFAULT_GROUP", "time": "2026-10-16 16:14:01",
+        "temperature": ["40.00"], "humidity": ["40.0"],
+        "speed": 90, "mileage": 15.0,
+        "address": "36.38734N,45.39252E", "alarmList": None,
+    }
+    detail_record2 = dict(detail_record, time="2026-10-16 16:14:54")
+    RESP_DETAIL_OK = {"code": 200, "msg": "Success", "data": [detail_record, detail_record2]}
+    # ---- 真实捕获：详情无数据 / 无效车辆（都是这个形态） ----
+    RESP_DETAIL_NODATA = {"code": 200, "msg": "No Data", "data": []}
+
+    detail_case = copy.deepcopy(BASE_CASE)
+    detail_case["case_name"] = "获取温湿度报表详情"
+    detail_case["payload"] = {
+        "vehicle_id": 89641,
+        "start_time": "2026-10-16 00:00:00",
+        "end_time": "2026-10-16 23:59:59",
+    }
+
+    def run_detail(title, resp, expect_pass, case=None):
+        case = case or detail_case
+        try:
+            verify_temp_humidity_detail_response(copy.deepcopy(resp), case)
+            ok, dt = True, ""
+        except AssertionError as e:
+            ok, dt = False, str(e).split("\n")[0][:120]
+        mark = "✅" if ok == expect_pass else "❌ 与预期不符"
+        print(f"{mark} {title}")
+        print(f"     预期 {'通过' if expect_pass else '失败'} / 实际 {'通过' if ok else '失败'}")
+        if dt:
+            print(f"     断言信息: {dt}")
+        return ok == expect_pass
+
+    # 1) 有数据 -> 应通过
+    results.append(run_detail("详情有数据(10-16)", RESP_DETAIL_OK, True))
+
+    # 2) No Data -> 应失败（msg 校验拦住）
+    results.append(run_detail("详情 No Data（无效车辆/无数据）", RESP_DETAIL_NODATA, False))
+
+    # 3) 人为构造「msg=Success 但空数组」-> require_data 应拦住
+    resp_fake_ok = {"code": 200, "msg": "Success", "data": []}
+    results.append(run_detail("msg=Success 但空数组 + require_data=true", resp_fake_ok, False))
+
+    # 4) 同上但关掉 require_data -> 应通过（开关有效）
+    case_off2 = copy.deepcopy(detail_case)
+    case_off2["require_data"] = False
+    results.append(run_detail("同上 + require_data=false", resp_fake_ok, True, case_off2))
+
+    # 5) temperature 不是数组 -> 应失败
+    resp_bad_t = copy.deepcopy(RESP_DETAIL_OK)
+    resp_bad_t["data"][0]["temperature"] = 40.0
+    results.append(run_detail("temperature 不是数组", resp_bad_t, False))
+
+    # 6) time 越界 -> 应失败
+    resp_bad_time = copy.deepcopy(RESP_DETAIL_OK)
+    resp_bad_time["data"][0]["time"] = "2026-10-20 08:00:00"
+    results.append(run_detail("time 越界", resp_bad_time, False))
+
+    # 7) 混入其他设备 -> 应失败（单车详情不该出现多台设备）
+    resp_multi = copy.deepcopy(RESP_DETAIL_OK)
+    resp_multi["data"][1]["deviceId"] = "11222111222"
+    results.append(run_detail("混入其他设备", resp_multi, False))
+
+    # 8) 缺字段 -> 应失败
+    resp_missing2 = copy.deepcopy(RESP_DETAIL_OK)
+    del resp_missing2["data"][0]["address"]
+    results.append(run_detail("记录缺少 address 字段", resp_missing2, False))
+
+    # 9) 空温度数组 + require_data=true -> 应失败
+    resp_empty_arr = copy.deepcopy(RESP_DETAIL_OK)
+    resp_empty_arr["data"] = [dict(detail_record, temperature=[], humidity=[])]
+    results.append(run_detail("温湿度数组为空", resp_empty_arr, False))
 
     print("=" * 78)
     print(f"通过 {sum(results)}/{len(results)} 项")

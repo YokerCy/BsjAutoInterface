@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 import json
+from datetime import datetime
 
 import allure
 import pytest
@@ -163,3 +164,154 @@ def test_get_temp_humidity_report(user_client, get_temp_humidity_report):
     )
 
     verify_temp_humidity_response(result, get_temp_humidity_report)
+
+
+# ===========================================================================
+# 温湿度报表详情（POST /tempHumidityReport/getTempHumidityDetailReport）
+# ---------------------------------------------------------------------------
+# 实测返回结构（探测 tools/probe_temp_humidity.py 得到）：
+#   data 是数组，每条记录：
+#   {"deviceName": "15900000070", "deviceId": "15900000070",
+#    "group": "DEFAULT_GROUP",
+#    "time": "2026-10-16 16:14:01",              <-- 单点时间（列表接口是区间）
+#    "temperature": ["40.00"], "humidity": ["40.0"],   <-- 数组，不是数字
+#    "speed": 90, "mileage": 15.0,
+#    "address": "36.38734N,45.39252E", "alarmList": null}
+#
+# 与列表接口的差异（重要）：
+#   - 无数据时返回 msg="No Data" + data=[]（**不是**占位记录，比列表接口直白）
+#   - 没有 vehicleId 字段，只有 deviceName/deviceId
+#   - 实测 pageNum=2 仍返回与第 1 页相同的数据（分页是否生效存疑，故不作断言）
+# ===========================================================================
+
+# 详情记录应包含的字段
+TEMP_HUMIDITY_DETAIL_KEYS = {
+    "deviceName", "deviceId", "group", "time",
+    "temperature", "humidity", "speed", "mileage", "address", "alarmList",
+}
+DETAIL_TIME_FMT = "%Y-%m-%d %H:%M:%S"
+
+
+def verify_temp_humidity_detail_response(result, case):
+    """
+    校验温湿度报表详情响应（纯函数，不依赖网络，便于离线回归断言逻辑）。
+
+    :param result: 接口返回的 JSON dict
+    :param case:   yaml 用例（提供 expect_code/expect_msg/payload/require_data）
+    :raises AssertionError: 任一校验点不通过
+    """
+    p = _payload(case)
+    name = case["case_name"]
+
+    actual_code = result.get("code")
+    actual_msg = result.get("msg")
+    actual_data = result.get("data")
+
+    assert actual_code == case["expect_code"], \
+        f"[{name}] 返回码异常: 期望 {case['expect_code']}, 实际 {actual_code}, " \
+        f"响应={json.dumps(result, ensure_ascii=False)[:1500]}"
+
+    if actual_msg != case["expect_msg"]:
+        hint = ""
+        if actual_msg == "No Data":
+            hint = ("（服务端 No Data 表示该车辆在此时间窗内没有温湿度数据；"
+                    "请检查 vehicleId 是否有效、时间窗内是否有数据）")
+        raise AssertionError(
+            f"[{name}] 返回消息异常: 期望 {case['expect_msg']}, 实际 {actual_msg}{hint}"
+        )
+
+    assert isinstance(actual_data, list), \
+        f"[{name}] data 应为数组, 实际 {type(actual_data).__name__}, " \
+        f"data={json.dumps(actual_data, ensure_ascii=False)[:500]}"
+
+    start_dt = datetime.strptime(p["start_time"], DETAIL_TIME_FMT)
+    end_dt = datetime.strptime(p["end_time"], DETAIL_TIME_FMT)
+
+    for idx, item in enumerate(actual_data):
+        missing = TEMP_HUMIDITY_DETAIL_KEYS - set(item.keys())
+        assert not missing, \
+            f"[{name}] 第{idx}条记录缺少字段 {missing}, " \
+            f"实际={json.dumps(item, ensure_ascii=False)[:600]}"
+
+        # 温湿度是数组（本接口按通道返回），不是标量
+        for k in ("temperature", "humidity"):
+            assert isinstance(item.get(k), list), \
+                f"[{name}] 第{idx}条 {k} 应为数组, " \
+                f"实际 {type(item.get(k)).__name__}={item.get(k)!r}"
+
+        # speed / mileage 应为数字
+        for k in ("speed", "mileage"):
+            v = item.get(k)
+            assert isinstance(v, (int, float)) and not isinstance(v, bool), \
+                f"[{name}] 第{idx}条 {k} 应为数字, 实际 {type(v).__name__}={v!r}"
+
+        # 时间格式 + 落在请求区间内（验证时间过滤真的生效）
+        try:
+            pt_time = datetime.strptime(item["time"], DETAIL_TIME_FMT)
+        except Exception:
+            raise AssertionError(
+                f"[{name}] 第{idx}条 time 格式不符合 yyyy-MM-dd HH:mm:ss: {item['time']!r}"
+            )
+        assert start_dt <= pt_time <= end_dt, \
+            f"[{name}] 第{idx}条时间 {item['time']} 超出请求区间 " \
+            f"[{p['start_time']} ~ {p['end_time']}]，时间过滤可能未生效"
+
+    # 单车详情：返回记录不应混入其他设备
+    if actual_data:
+        device_ids = {item.get("deviceId") for item in actual_data}
+        assert len(device_ids) == 1, \
+            f"[{name}] 单车详情返回了多台设备的数据 {device_ids}，车辆过滤可能未生效"
+
+    # ---- 数据存在性校验（可用 yaml 的 require_data: false 关闭） ----
+    if case.get("require_data", True):
+        assert actual_data, \
+            f"[{name}] data 为空数组：vehicleId={p.get('vehicle_id')} 在 " \
+            f"[{p['start_time']} ~ {p['end_time']}] 内查不到温湿度明细。" \
+            f"若确认该时段本就无数据，请调整测试数据或把 yaml 的 require_data 设为 false"
+
+        valid = [
+            it for it in actual_data
+            if it.get("temperature") and it.get("humidity")
+        ]
+        assert valid, \
+            f"[{name}] 所有记录的 temperature/humidity 均为空数组，" \
+            f"说明返回的不是有效温湿度明细。" \
+            f"若确认该时段本就无数据，请设 require_data=false。" \
+            f"实际={json.dumps(actual_data, ensure_ascii=False)[:600]}"
+
+
+@allure.epic("温湿度报表")
+@allure.feature("温湿度报表详情")
+@pytest.mark.parametrize(
+    "get_temp_humidity_detail_report",
+    cfg.get_cases_by_interface("temp_humidity_report", "get_temp_humidity_detail_report")
+)
+def test_get_temp_humidity_detail_report(user_client, get_temp_humidity_detail_report):
+    allure.dynamic.title(get_temp_humidity_detail_report["case_name"])
+    allure.dynamic.description(
+        f"预期校验点：{get_temp_humidity_detail_report['expect_code']} / "
+        f"{get_temp_humidity_detail_report['expect_msg']}"
+    )
+
+    p = _payload(get_temp_humidity_detail_report)
+
+    api = TempHumidityReport(user_client)
+    result = api.get_temp_humidity_detail_report(
+        vehicle_id=p.get("vehicle_id"),
+        start_time=p.get("start_time"),
+        end_time=p.get("end_time"),
+        user_id=p.get("user_id"),          # None -> 自动取登录用户ID
+        page_num=p.get("page_num", 1),
+        page_size=p.get("page_size", 20),
+    )
+
+    allure_attach_comparison(
+        expected=get_temp_humidity_detail_report["expect_code"],
+        actual=result.get("code"), name="响应状态码"
+    )
+    allure_attach_comparison(
+        expected=get_temp_humidity_detail_report["expect_msg"],
+        actual=result.get("msg"), name="响应消息状态"
+    )
+
+    verify_temp_humidity_detail_response(result, get_temp_humidity_detail_report)

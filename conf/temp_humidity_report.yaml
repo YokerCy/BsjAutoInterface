@@ -26,3 +26,33 @@
     end_time: "2026-10-16 23:59:59"
     page_num: 1
     page_size: 20
+
+# ---------------------------------------------------------------------------
+# 温湿度报表详情（POST /tempHumidityReport/getTempHumidityDetailReport）
+# 说明：
+#   userId    -> number  传 null 时由代码自动取登录用户ID（本账号实测为 241）
+#   vehicleId -> number  **单个**车辆ID（注意列表接口是 vehicleIds 数组，这里是单数）
+#   startTime / endTime -> yyyy-MM-dd HH:mm:ss
+#   pageNum / pageSize  -> 分页
+#
+# 与列表接口的差异（实测）：
+#   - 无数据时**不返回占位记录**，而是 msg="No Data" + data=[]（更直白）
+#   - time 是**单点时间**（列表接口是「起~止」区间字符串）
+#   - 温湿度是**数组**：temperature=["40.00"]、humidity=["40.0"]
+#   - 记录里**没有 vehicleId**，只有 deviceName/deviceId
+#   - 实测 pageNum=2 仍返回与第 1 页相同的数据，分页是否生效存疑（未作断言）
+#
+# require_data: true -> 要求必须查到真实数据（data 非空且温湿度数组非空）
+# ---------------------------------------------------------------------------
+- case_name: "获取温湿度报表详情"
+  interface: "get_temp_humidity_detail_report"
+  expect_code: 200
+  expect_msg: "Success"
+  require_data: true
+  payload:
+    user_id: null
+    vehicle_id: 89641
+    start_time: "2026-10-16 00:00:00"
+    end_time: "2026-10-16 23:59:59"
+    page_num: 1
+    page_size: 20

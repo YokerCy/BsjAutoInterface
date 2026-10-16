@@ -47,4 +47,5 @@ endpoints:
   itinerary_analysis: "/itineraryAnalysis/getItineraryAnalysisPageData"
   oil_vehicle_fuel: "/oil/vehicleFuel"
   temp_humidity_report: "/tempHumidityReport/getTempHumidityReport"
+  temp_humidity_detail_report: "/tempHumidityReport/getTempHumidityDetailReport"
 

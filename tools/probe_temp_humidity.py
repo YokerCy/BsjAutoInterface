@@ -68,6 +68,58 @@ def main():
     )
     show("探测4 pageNum=2", r4)
 
+    print("\n" + "=" * 72)
+    print("详情接口 /tempHumidityReport/getTempHumidityDetailReport")
+    print("=" * 72)
+
+    time.sleep(3)
+
+    # ---- 详情探测 1：正常 ----
+    d1 = api.get_temp_humidity_detail_report(
+        vehicle_id=89641,
+        start_time="2026-10-16 00:00:00",
+        end_time="2026-10-16 23:59:59",
+        page_num=1,
+        page_size=20,
+    )
+    show("详情探测1 正常（10-16 全天）", d1, limit=2500)
+
+    time.sleep(3)
+
+    # ---- 详情探测 2：空时间窗（昨天） ----
+    d2 = api.get_temp_humidity_detail_report(
+        vehicle_id=89641,
+        start_time="2026-10-15 00:00:00",
+        end_time="2026-10-15 23:59:59",
+        page_num=1,
+        page_size=20,
+    )
+    show("详情探测2 空窗口（10-15 全天）", d2, limit=1200)
+
+    time.sleep(3)
+
+    # ---- 详情探测 3：无效车辆 ----
+    d3 = api.get_temp_humidity_detail_report(
+        vehicle_id=99999999,
+        start_time="2026-10-16 00:00:00",
+        end_time="2026-10-16 23:59:59",
+        page_num=1,
+        page_size=20,
+    )
+    show("详情探测3 无效车辆 99999999", d3)
+
+    time.sleep(3)
+
+    # ---- 详情探测 4：分页 pageNum=2 ----
+    d4 = api.get_temp_humidity_detail_report(
+        vehicle_id=89641,
+        start_time="2026-10-16 00:00:00",
+        end_time="2026-10-16 23:59:59",
+        page_num=2,
+        page_size=20,
+    )
+    show("详情探测4 pageNum=2", d4)
+
 
 if __name__ == "__main__":
     main()
