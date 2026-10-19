@@ -7,6 +7,7 @@ __pycache__/
 # Test artifacts
 allure-results/
 allure-report/
+allure-results-ui/
 report/
 
 # IDE

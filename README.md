@@ -63,3 +63,60 @@
   - 所有接口路由统一放在这里进行管理 ``endpoints`` 段下面添加, 接口方法中只需要传入对应的key名
 - profes 接口方法
 - test_case 测试方法
+
+---
+
+## UI 自动化层（Playwright）
+
+接口层覆盖业务逻辑，UI 层只做冒烟（约 10%），验证**用户真正看得见的状态**：
+按钮置灰、弹窗弹不弹、日历蓝点、告警红色、文件下载。
+
+### 目录
+
+| 目录 | 职责 |
+|---|---|
+| `base/ui/` | 基础设施：配置读取、登录态快照、context 构建 |
+| `ui/pages/` | Page Object，**locator 只允许写在这里** |
+| `ui/flows/` | 业务流程（多页面串联） |
+| `ui/test_smoke/` | 冒烟用例，每条带 `@allure.id` 对应手工用例编号 |
+
+### 执行
+
+```bash
+# 全部 UI 冒烟
+python -m pytest ui/ -v --alluredir=./allure-results-ui
+
+# 只跑 P0
+python -m pytest ui/ -m p0 -v
+
+# 有头模式（看得到浏览器操作过程，排查用）
+python -m pytest ui/ -v --headed
+
+# 看报告
+allure serve ./allure-results-ui
+```
+
+### 浏览器内核
+
+默认复用系统已装的 **Edge**（`channel=msedge`），不需要额外下载 140MB 的 chromium 内核。
+要换 Chrome：`python -m pytest ui/ --browser-channel chrome`。
+
+### 登录态
+
+首次运行会真实登录一次并写入 `logs/ui_state.json`，**12 小时内复用**，过期自动重登。
+删掉该文件即可强制重新登录。
+
+### 失败留证
+
+失败时自动在 `logs/ui_artifacts/` 留存：
+
+- `<case>.zip` —— Playwright trace：`playwright show-trace logs/ui_artifacts/xxx.zip`
+  可完整回放现场（DOM 快照 + 网络请求 + 控制台日志）
+- `<case>.png` —— 失败瞬间全页截图
+
+### 两个页面 fixture（别混用）
+
+- `anon_page` —— **无登录态**，用于登录页自身（登录成功/失败/表单校验）
+- `app_page` —— **带登录态**，用于业务页，免去每条用例重复登录
+
+混用会导致登录用例假绿：带登录态打开登录页会被路由守卫直接弹走。

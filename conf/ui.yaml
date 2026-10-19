@@ -1,0 +1,33 @@
+# ==========================================================
+# UI 层配置（可提交到仓库，不放密码）
+# 账号密码复用 conf/config.yaml -> environments.<env>.accounts.admin
+# ==========================================================
+
+# 平台首页（前端根地址，不带 webapi 后缀）
+base_url: "https://ytest.gpstracktech.com"
+
+# 登录页路由（hash 路由）
+login_path: "/#/loginv2"
+
+# 登录成功后的落地标识：URL 里不再包含 login 即视为成功
+login_success_url_excludes: "login"
+
+viewport:
+  width: 1600
+  height: 900
+
+timeouts:
+  # 单元素等待
+  default: 15000
+  # 页面导航
+  navigation: 30000
+  # 断言重试（Playwright expect 默认 5s，这里放宽）
+  expect: 10000
+
+# 登录态复用：第一次跑会真实登录一次并落盘，后续用例直接复用
+state_file: "logs/ui_state.json"
+# 登录态有效期（小时），超过则重新登录
+state_ttl_hours: 12
+
+# 失败留证目录（trace / 截图）
+artifact_dir: "logs/ui_artifacts"
