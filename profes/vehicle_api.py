@@ -164,9 +164,9 @@ if __name__ == '__main__':
             {
                 "groupId": 489,
                 "userId": 241,
-                "groupName": "***REMOVED***",
+                "groupName": "auto_分组",
                 "key": "489",
-                "label": "***REMOVED***",
+                "label": "auto_分组",
                 "value": "489",
                 "children": [
                     {
@@ -209,7 +209,7 @@ if __name__ == '__main__':
                 "children": []
             }
         ]
-    temp2 = [{'groupId': 2272, 'userId': 241, 'groupName': 'auto_车组', 'key': '2272', 'label': 'auto_车组', 'value': '2272', 'children': []}, {'groupId': 390, 'userId': 241, 'groupName': 'DEFAULT_GROUP', 'key': '390', 'label': 'DEFAULT_GROUP', 'value': '390', 'children': []}, {'groupId': 489, 'userId': 241, 'groupName': '***REMOVED***', 'key': '489', 'label': '***REMOVED***', 'value': '489', 'children': [{'key': '489_27106', 'value': '489_27106', 'label': 'qqw', 'plate': 'qqw', 'vehicleId': 27106, 'groupId': 489, 'terminalNo': '11222111222', 'vehicleType': 1, 'expireDate': None, 'vehicleState': 3, 'posState': 5, 'terminalType': 'ED02R', 'terminalTypeAlias': 'ED02R', 'accState': 2, 'videoType': 1, 'vehicleTypeEnum': 1, 'lon': None, 'lat': None, 'direct': 0, 'speed': 0.0, 'terminalClassify': 1, 'attentionState': 0, 'cameraNum': 4, 'cameraLine': '[1,2,3,4]', 'iconType': None, 'protocol': 1}]}]
+    temp2 = [{'groupId': 2272, 'userId': 241, 'groupName': 'auto_车组', 'key': '2272', 'label': 'auto_车组', 'value': '2272', 'children': []}, {'groupId': 390, 'userId': 241, 'groupName': 'DEFAULT_GROUP', 'key': '390', 'label': 'DEFAULT_GROUP', 'value': '390', 'children': []}, {'groupId': 489, 'userId': 241, 'groupName': 'auto_分组', 'key': '489', 'label': 'auto_分组', 'value': '489', 'children': [{'key': '489_27106', 'value': '489_27106', 'label': 'qqw', 'plate': 'qqw', 'vehicleId': 27106, 'groupId': 489, 'terminalNo': '11222111222', 'vehicleType': 1, 'expireDate': None, 'vehicleState': 3, 'posState': 5, 'terminalType': 'ED02R', 'terminalTypeAlias': 'ED02R', 'accState': 2, 'videoType': 1, 'vehicleTypeEnum': 1, 'lon': None, 'lat': None, 'direct': 0, 'speed': 0.0, 'terminalClassify': 1, 'attentionState': 0, 'cameraNum': 4, 'cameraLine': '[1,2,3,4]', 'iconType': None, 'protocol': 1}]}]
 
     # print(find_group_by_name(data=temp2, target_name='auto_车组'))
 
