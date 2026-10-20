@@ -1,0 +1,30 @@
+# 本地私密配置示例
+#
+# 使用方式：复制本文件为 conf/config.local.yaml，填入真实值。
+#   copy conf\config.local.example.yaml conf\config.local.yaml
+#
+# config.local.yaml 已被 .gitignore 忽略，不会提交到仓库。
+# 这些值对应 conf/config.yaml 里的 ${NAME} 占位符；
+# 同名环境变量优先级更高（CI/服务器上配环境变量即可，不必落地文件）。
+
+secrets:
+  # --- 测试环境登录账号 ---
+  TEST_USERNAME: "<测试账号>"
+  TEST_PASSWORD: "<测试密码>"
+
+  # --- 开放接口 Key（请求头 key） ---
+  OPEN_API_KEY: "<开放接口 Key>"
+
+  # --- 注册 / 新增用户用例用到的资料 ---
+  TEST_EMAIL: "<注册用邮箱>"
+  REGISTER_PASSWORD_ENC: "<前端 AES 加密后的密码 Base64>"
+  ADD_USER_PASSWORD_ENC: "<新增用户接口用的加密密码 Base64>"
+
+  # --- MailSlurp 临时邮箱（注册链接收取） ---
+  MAILSLURP_API_KEY: "<MailSlurp API Key>"
+  MAILSLURP_INBOX_ID: "<MailSlurp Inbox ID>"
+
+wechat:
+  # 企微群机器人 Webhook（失败通知用）
+  webhook_url: "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=<你的key>"
+  # mention_userids: []

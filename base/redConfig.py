@@ -13,6 +13,8 @@ from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad
 from Crypto.Util.Padding import unpad
 
+from base import secrets as _secrets
+
 class Config:
     def __init__(self, env=None):
         # 动态获取路径，确保在不同环境下都能找到配置文件
@@ -36,11 +38,13 @@ class Config:
         #     self.data = yaml.safe_load(f)
 
     def _read_yaml(self, path):
-        """将重复的读取逻辑封装"""
+        """将重复的读取逻辑封装；加载后展开 ${NAME} 密钥占位符"""
         if not os.path.exists(path):
             raise FileNotFoundError(f"未找到配置文件: {path}")
         with open(path, "r", encoding="utf-8") as f:
-            return yaml.safe_load(f)
+            data = yaml.safe_load(f)
+        # 凭据不落仓库：config.yaml 里写 ${NAME}，实际值来自环境变量或 config.local.yaml
+        return _secrets.expand(data)
 
     def get_url(self, name):
         # 优雅的路径拼接：自动处理 base_url 末尾是否有 / 的情况

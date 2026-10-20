@@ -13,27 +13,31 @@ import json
 from bs4 import BeautifulSoup
 from mailslurp_client import Configuration, ApiClient, WaitForControllerApi, InboxControllerApi, EmailControllerApi
 
+from base import secrets as _secrets
+
 
 class ByskSmart(object):
 
-    def __int__(self):
-        # 邮箱地址（你绑定的）
-        self.YOUR_EMAIL = '***REMOVED***'
-        self.psw = '***REMOVED***'
+    def __init__(self):
+        # 邮箱地址与加密后的密码：真实值放 conf/config.local.yaml 或环境变量，不进仓库
+        self.YOUR_EMAIL = _secrets.get("TEST_EMAIL", "")
+        self.psw = _secrets.get("REGISTER_PASSWORD_ENC", "")
         self.token = None
 
     def email_register(self):
-        # MailSlurp API key
-        API_KEY = '***REMOVED***'  # <<< 替换成你的 key
-        INBOX_ID = '***REMOVED***'
+        # MailSlurp 临时邮箱凭据（环境变量 MAILSLURP_API_KEY / MAILSLURP_INBOX_ID）
+        API_KEY = _secrets.require("MAILSLURP_API_KEY")
+        INBOX_ID = _secrets.require("MAILSLURP_INBOX_ID")
+        YOUR_EMAIL = _secrets.require("TEST_EMAIL")
+        PSW_ENC = _secrets.require("REGISTER_PASSWORD_ENC")
 
         # 平台注册 POST 接口
         REGISTER_URL = 'https://y.gpstracktech.com/webapi/user/sendRegisterUrl?__sm_ver=1.21.3-4,20250718190538&platform=PC&version=base'  # <<< 替换为实际接口
 
         # 注册参数
         payload = {
-            "email": '***REMOVED***',
-            "password": '***REMOVED***',
+            "email": YOUR_EMAIL,
+            "password": PSW_ENC,
             "privacyFlag": 1,
             "redirectPath": "https://y.gpstracktech.com"
         }
@@ -376,7 +380,7 @@ class ByskSmart(object):
                 "id": 'null',
                 "userName": "adduser",
                 "email": "",
-                "password": "***REMOVED***",
+                "password": _secrets.require("ADD_USER_PASSWORD_ENC"),
                 "phone": "",
                 "permission": "SVBMHM01,SVBMQA02,SVBMRE03,SVBMAS05,SV7FUSAU,SV7FUSEU,SV7FUSDU,SVHNGPAG,SVHNGPEG,SVHNGPDG,SV5MDEAD,SV5MDEBA,SV5MDEED,SV5MDEDD,SV5MDESM,SVGXMORE,SVTADRAD,SVTADRED,SVTADRDD,SVGXMOPL,SVGXMNPB,SVGXMOSP,SVGXMOHT,SVGXMOTP,SVGXMOCM,SV9PRUAP,SV9PRUEP,SV9PRUDP,SVN0RUAL,SVN0RUEL,SVN0RUDL,SVA7RUAG,SVA7RUEG,SVA7RUDG,SVC1RPML,SVC1RPWE,SVC1RPTH,SVC1RPFU,SVC1RPDR,SVC1RPPR,SVC1RPID,SVC1RPOR,SVC1RPCI,SVC1RPMU,SVC1RPAL,SVC1RPDD,SVC1RPDL,SVC1RPTX,SVC1RPME,SVC1RPAI,SVC1OFRD,SVC1RPAS,SV46ASSC,SV46VSSR,SVC1NFRE,SVC1ONRA,SVC1ONRD,SVC1RPTS,SVC1RPTD,SVC1RPDS,SVC1RPFC,SVC1RPPA,SVC1RPPD,SVMML6DM,SVC1RVWE,SVC1RPVF,SV46DRSC,SVD0QATB,SVD0QADO,SV46ASDB,SV46ASHS,SVJKIDAD,SVJKIDED,SVJKIDD4,SV6FJ9AD,SV6FJ9ED,SV6FJ9DE",
                 "webUrl": "",

@@ -1,4 +1,10 @@
 # config.yaml
+#
+# 【凭据规范】本文件进公开仓库，禁止写入真实账号/密码/密钥。
+# 所有凭据统一写 ${变量名} 占位符，实际值按以下优先级注入：
+#   1. 环境变量                          TEST_USERNAME / TEST_PASSWORD / OPEN_API_KEY
+#   2. conf/config.local.yaml -> secrets.<变量名>（本地私有，已被 .gitignore 忽略）
+# 缺少必填项时启动即报错，不会静默用空值去登录。
 default: "test"
 
 environments:
@@ -8,14 +14,14 @@ environments:
     timeout: 5
     accounts:
       admin:
-        username: "youself"
-        password: "***REMOVED***"
+        username: "${TEST_USERNAME}"
+        password: "${TEST_PASSWORD}"
     common_params:
       __sm_ver: "1.21.3-4,20250718190538"
       platform: "PC"
       version: "base"
     common_headers:
-      key: "***REMOVED***"
+      key: "${OPEN_API_KEY}"
       version: "1.0"
       Accept-Language: "en"
       Content-Type: "application/json"
