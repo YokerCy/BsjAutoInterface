@@ -98,8 +98,23 @@ allure serve ./allure-results-ui
 
 ### 浏览器内核
 
-默认复用系统已装的 **Edge**（`channel=msedge`），不需要额外下载 140MB 的 chromium 内核。
-要换 Chrome：`python -m pytest ui/ --browser-channel chrome`。
+默认用本机安装的 **Chrome**（`channel=chrome`）——平台用户绝大多数用 Chrome，
+自动化用同一内核，渲染差异、兼容性问题和用户看到的才一致。
+
+渠道按 `conf/ui.yaml -> browser` 决策，顺序是：
+
+1. 命令行 `--browser-channel xxx`（最高优先级，临时排查用）
+2. `channel: "chrome"`
+3. `fallback_channels: ["msedge"]`（本机没装 Chrome 时自动降级，不用改代码）
+4. 都没有才用 Playwright 自带 chromium（需先 `python -m playwright install chromium`）
+
+**不需要下载内核**：直接驱动系统已安装的 Chrome。安装路径支持用户级安装
+（`%LOCALAPPDATA%\Google\Chrome\Application\chrome.exe`），不只查 Program Files。
+
+**UA 处理**：无头模式会带上 `HeadlessChrome` 标记，部分前端环境判断或风控会据此
+走不同分支，导致"自动化跑的和用户看到的不一样"。`mask_headless_ua: true`（默认）
+会把 UA 修正为真实版本号（如 `Chrome/155.0.0.0`），`navigator.userAgentData`
+也会显示 `Google Chrome`。
 
 ### 登录态
 

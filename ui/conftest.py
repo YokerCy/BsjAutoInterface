@@ -11,11 +11,13 @@ UI 层 fixtures。
 """
 import pytest
 
+from base.log import logger
 from base.redConfig import Config
 from base.ui.browser import (
     artifact_dir,
     build_context,
     load_ui_config,
+    resolve_channel,
     state_is_fresh,
     state_path,
 )
@@ -45,15 +47,26 @@ def account(env):
 
 
 @pytest.fixture(scope="session")
-def browser_type_launch_args(browser_type_launch_args):
+def browser_type_launch_args(browser_type_launch_args, browser_name, ui_cfg):
     """
-    浏览器内核来源：优先用系统已装的 Edge（channel=msedge），
-    避免每台机器都要下载 ~140MB 的 chromium 内核。
-    如已自行安装内核或想换浏览器，命令行传 --browser-channel 即可覆盖。
+    浏览器渠道决策：命令行 --browser-channel > conf/ui.yaml > 自动探测。
+
+    默认走 chrome（与平台绝大多数真实用户一致），本机没装则回退 msedge，
+    都没有才用 Playwright 自带 chromium（需先 playwright install）。
     """
     args = dict(browser_type_launch_args)
-    if not args.get("channel"):
-        args["channel"] = "msedge"
+
+    # 命令行已显式指定渠道时不覆盖；只有 firefox/webkit 不做渠道解析
+    if browser_name == "chromium" and not args.get("channel"):
+        channel = resolve_channel(ui_cfg)
+        if channel:
+            args["channel"] = channel
+            logger.info(f"🌐 UI 浏览器渠道: {channel}")
+        else:
+            logger.warning(
+                "⚠️ 未找到 chrome/msedge，回退 Playwright 自带 chromium。"
+                "若启动失败请执行: python -m playwright install chromium"
+            )
     return args
 
 

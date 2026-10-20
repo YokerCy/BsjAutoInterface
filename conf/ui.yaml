@@ -9,9 +9,6 @@ base_url: "https://ytest.gpstracktech.com"
 # 登录页路由（hash 路由）
 login_path: "/#/loginv2"
 
-# 登录成功后的落地标识：URL 里不再包含 login 即视为成功
-login_success_url_excludes: "login"
-
 viewport:
   width: 1600
   height: 900
@@ -23,6 +20,18 @@ timeouts:
   navigation: 30000
   # 断言重试（Playwright expect 默认 5s，这里放宽）
   expect: 10000
+
+browser:
+  # 首选渠道：chrome
+  # 理由：平台用户绝大多数用 Chrome，用同一内核排查问题才有意义
+  #        （不同内核的渲染差异会变成"我本地好的啊"这类扯皮）
+  channel: "chrome"
+  # 首选不可用时按顺序回退；全部不可用则用 Playwright 自带 chromium（需先 install）
+  fallback_channels: ["msedge"]
+  # 无头模式。排查时用命令行 --headed 覆盖，不用改配置
+  headless: true
+  # 去掉 UA 里的 Headless 标记，避免前端/风控把自动化当爬虫
+  mask_headless_ua: true
 
 # 登录态复用：第一次跑会真实登录一次并落盘，后续用例直接复用
 state_file: "logs/ui_state.json"
